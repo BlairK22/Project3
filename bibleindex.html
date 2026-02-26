@@ -1,0 +1,211 @@
+<!-- bibleajax.html
+ -- James Skon Feb 21, 2015
+ -- Bob Kasper January 2020: corrected to check for missing search type,
+ --     added comments
+ -- Deborah Wilson, February 2026: updated to HTML5 Document Type Declaration,
+ --     updated formatting
+ -- Mount Vernon Nazarene University
+ --
+ -- This in the HTML/JavaScript client side of a simple demo system that shows
+ -- how a web page and C++ server program can use AJAX to pass data back and forth.
+ -- The browser displays this page, the users fills in the fields, and clicks
+ -- the "Submit" button. The submit action invokes the JavaScript
+ -- getresponse function,
+ -- which packages up the field labels and values into a single string,
+ -- and calls the AJAX library function XMLHttp.open(...)
+ -- to send the data to the server program (bibleajax.cgi)
+ -- The client script then waits for the server program to finish,
+ -- and return a result (via XMLHttp.onreadystatechange function).
+ -- 
+ -- It then takes the returned string (in XMLHttp.responseText) and 
+ -- displays it within the response_area element on this same web page.
+ --
+ -- Optional: You may also add Javascript code to preprocess recieved messages,
+ -- which allows some HTML formatting to be done by the client
+ -- instead of requiring the C++ server program to do all of the UI formatting.
+ --
+ -- *******************************************
+ -- ************ IMPORTANT NOTE ***************
+ -- *******************************************
+ -- You must change the reference to "USERNAME" in the "getresponse" function
+ -- to your username on the Linux server!
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- $Id: bibleajax.html,v 1.8 rkasper Exp $ -->
+  <title>BibleAjax Example Search Form</title>
+
+  <script type="text/javascript">
+  var XMLHttp;
+  if(navigator.appName == "Microsoft Internet Explorer")
+  {
+     XMLHttp = new ActiveXObject("Microsoft.XMLHTTP");
+  } 
+  else 
+  {
+     XMLHttp = new XMLHttpRequest();
+  }
+
+  // TODO: change USERNAME to your username on Linux server.
+  function getresponse ()
+  {
+     // check that search_type is selected
+     searchType = document.querySelector('input[name = "search_type"]:checked');
+     if (searchType == null)
+     {
+        alert("Please select a search type!");
+        return;
+     }
+     // NOTE: This page must be loaded from cs.mvnu.edu to avoid a cross-origin request violation.
+     XMLHttp.open("GET", "/class/csc3004/blakaramaga/cgi-bin/bibleajax.cgi?"
+                  + "search_type=" + searchType.value
+                  + "&book=" + document.getElementById('book').value
+                  + "&chapter=" + document.getElementById('chapter').value
+                  + "&verse=" + document.getElementById('verse').value
+                  + "&num_verse=" + document.getElementById('num_verse').value
+             + "&version=" + document.getElementById('version').value,
+                  true); // true indicates asynchronous request
+   
+     // callback function
+     XMLHttp.onreadystatechange=function()
+     {
+        if (XMLHttp.readyState == XMLHttp.DONE)
+           document.getElementById('response_area').innerHTML = XMLHttp.responseText;
+           // DEMO: alert("readystatechange with readyState " + XMLHttp.readyState);
+     }
+
+     XMLHttp.send(null); // sends standard input to server,
+                         // for a GET request there is no other data after request header
+  }
+  </script>
+</head>
+
+<body>
+<h1>Bible Search Test Form</h1>
+<h3>Select which type of search you would like to perform:</h3>
+<table>
+  <tr>
+  <td align=right valign=top><input name="search_type" type="radio" value="reference" id=search_type></td>
+  <td align=left valign=top>Verse lookup by <i>reference</i></td>
+
+  <td align=right valign=top><input name="search_type" type="radio" value="keyword" id=search_type></td>
+  <td align=left valign=top>Verse lookup by <i>keyword</i></td>
+
+  <td align=right valign=top><input name="search_type" type="radio" value="vines" id=search_type></td>
+  <td align=left valign=top><i>Vines</i> topical dictionary</td>
+  </tr>
+</table>
+
+<hr>
+<table>
+  <tr>
+  <td align=right valign=top>Book</td>
+  <td align=left valign=top>
+  <select name="book" id=book>
+  <option value="1">Genesis
+  <option value="2">Exodus
+  <option value="3">Leviticus
+  <option value="4">Numbers
+  <option value="5">Deuteronomy
+  <option value="6">Joshua
+  <option value="7">Judges
+  <option value="8">Ruth
+  <option value="9">1st Samuel
+  <option value="10">2nd Samuel
+  <option value="11">1st Kings
+  <option value="12">2nd Kings
+  <option value="13">1st Chronicles
+  <option value="14">2nd Chronicles
+  <option value="15">Ezra
+  <option value="16">Nehemiah
+  <option value="17">Esther
+  <option value="18">Job
+  <option value="19">Psalms
+  <option value="20">Proverbs
+  <option value="21">Ecclesiastes
+  <option value="22">Song of Solomon
+  <option value="23">Isaiah
+  <option value="24">Jeremiah
+  <option value="25">Lamentations
+  <option value="26">Ezekiel
+  <option value="27">Daniel
+  <option value="28">Hosea
+  <option value="29">Joel
+  <option value="30">Amos
+  <option value="31">Obadiah
+  <option value="32">Jonah
+  <option value="33">Micah
+  <option value="34">Nahum
+  <option value="35">Habakkuk
+  <option value="36">Zephaniah
+  <option value="37">Haggai
+  <option value="38">Zechariah
+  <option value="39">Malachi
+  <option value="40">Matthew
+  <option value="41">Mark
+  <option value="42">Luke
+  <option value="43">John
+  <option value="44">Acts
+  <option value="45">Romans
+  <option value="46">1st Corinthians
+  <option value="47">2nd Corinthians
+  <option value="48">Galatians
+  <option value="49">Ephesians
+  <option value="50">Philippians
+  <option value="51">Colossians
+  <option value="52">1st Thessalonians
+  <option value="53">2nd Thessalonians
+  <option value="54">1st Timothy
+  <option value="55">2nd Timothy
+  <option value="56">Titus
+  <option value="57">Philemon
+  <option value="58">Hebrews
+  <option value="59">James
+  <option value="60">1st Peter
+  <option value="61">2nd Peter
+  <option value="62">1st John
+  <option value="63">2nd John
+  <option value="64">3rd John
+  <option value="65">Jude
+  <option value="66">Revelation
+  </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td align=right valign=top>Chapter</td>
+  <td align=left valign=top><input name="chapter" type="text" maxlength=3  id=chapter></td>
+  </tr>
+  <tr>
+  <td align=right valign=top>Verse</td>
+  <td align=left valign=top><input name="verse" type="text" maxlength=3 id=verse></td>
+  </tr>
+  <tr>
+  <td align=right valign=top>Number of verses</td>
+  <td align=left valign=top><input name="num_verse" type="text" maxlength=3 id=num_verse></td>
+  </tr>
+<tr>
+  <td align=right valign=top>Bible Version</td>
+  <td align=left valign=top>
+  <select name="version" id=version>
+  <option value="web">World English Bible (WEB)
+  <option value="kjv">King James Version (KJV)
+  <option value="dby">Darby Translation
+  <option value="ylt">Young's Literal Translation
+  <option value="webster">Webster Translation
+  </select>
+  </td>
+  </tr>
+</table>
+
+<p>
+  <input type="submit" onclick="javascript: getresponse()" name="submit" value="submit" />
+</p>
+<hr>
+<div id="response_area"> <!-- container to display results from server -->
+</div>
+</body>
+</html>
