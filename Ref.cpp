@@ -87,9 +87,9 @@ Ref::Ref(const int b, const int c, const int v)
 }
 
 // Accessors
-int Ref::getBook() {return book;}	     // Access book number
-int Ref::getChapter() {return chapter;}	 // Access chapter number
-int Ref::getVerse() {return verse;};     // Access verse number
+int Ref::getBook() const {return book;}	     // Access book number
+int Ref::getChapter() const {return chapter;}	 // Access chapter number
+int Ref::getVerse() const {return verse;};     // Access verse number
 
 
 // REQUIRED: == comparison
@@ -99,6 +99,15 @@ bool Ref::operator==(const Ref & ref) const
 }
 
 // OPTIONAL: define < and > comparisons
+// < comparison - Required for map<Ref, int> to order its keys
+bool Ref::operator<(const Ref & ref) const
+{
+   if (book < ref.book) return true;
+   if (book > ref.book) return false;
+   if (chapter < ref.chapter) return true;
+   if (chapter > ref.chapter) return false;
+   return (verse < ref.verse);
+}
 
 
 // Display Reference

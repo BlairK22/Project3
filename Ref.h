@@ -10,13 +10,13 @@
  * NOTE: You may add code to this file, but do not
  * delete any code or delete any comments.
  *
- * STUDENT NAME: Blair Karamaga 
+ * STUDENT NAME: Blair Karamaga
  */
 
 #ifndef Ref_H
 #define Ref_H
 
-#include <string> 
+#include <string>
 #include <stdlib.h>
 
 using namespace std;
@@ -28,26 +28,27 @@ string GetNextToken(string& str, const string& delimiters);
 class Ref
 {
    private:
-      short book, chapter, verse;	// Reference information
-	  
+      short book, chapter, verse;       // Reference information
+
    public:
       // Constructors
-      Ref();  	        // Default constructor
-      Ref(string s); 	// Parse constructor - example parameter "43:3:16"
-      Ref(const int, const int, const int); 	// Construct from three integers
-      
-	  // Accessors
-      int getBook();	// Access book number
-      int getChapter();	// Access chapter number
-      int getVerse();	// Access verse number
-      
-	  // REQUIRED Comparison: determine if two references are equal
+      Ref();            // Default constructor
+      Ref(string s);    // Parse constructor - example parameter "43:3:16"
+      Ref(const int, const int, const int);     // Construct from three integers
+
+          // Accessors
+      int getBook() const;    // Access book number
+      int getChapter() const; // Access chapter number
+      int getVerse() const;   // Access verse number
+
+          // REQUIRED Comparison: determine if two references are equal
       bool operator==(const Ref &) const;
-	  
+
       // OPTIONAL: < and > comparisons for Ref objects might also be useful
-   
+      bool operator<(const Ref &) const;  // Required for map<Ref, int>
+
       // REQUIRED: Display the reference on cout, example output: John 3:16
-	  // Your version of display should show the book name
+          // Your version of display should show the book name
       // corresponding to the stored book number.
       void display();
 string getBookName();  // Return book name

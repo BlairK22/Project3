@@ -17,7 +17,18 @@ USER= blakaramaga
 CC= g++
 CFLAGS= -g -std=c++11
 
-all:	bibleajax.cgi PutCGI PutHTML
+# Part 1: build testreader only (CGI/HTML targets deactivated for now)
+all:	testreader
+
+# ---- Part 1: Console test program for indexed Bible ----
+
+testreader:	testreader.o Bible.o Ref.o Verse.o
+	$(CC) $(CFLAGS) -o testreader testreader.o Bible.o Ref.o Verse.o
+
+testreader.o:	testreader.cpp Bible.h Ref.h Verse.h
+	$(CC) $(CFLAGS) -c testreader.cpp
+
+# ---- CGI targets (deactivated until Part 2) ----
 
 # Build the CGI executable, linking Project 1 class files
 bibleajax.cgi:	bibleajax.o Bible.o Ref.o Verse.o
@@ -38,18 +49,17 @@ Verse.o:	Verse.cpp Verse.h Ref.h
 Bible.o:	Bible.cpp Bible.h Ref.h Verse.h
 	$(CC) $(CFLAGS) -c Bible.cpp
 
-PutCGI:	bibleajax.cgi
-	chmod 755 bibleajax.cgi
-	cp bibleajax.cgi /var/www/html/class/csc3004/$(USER)/cgi-bin
+# PutCGI and PutHTML deactivated for Part 1 to avoid replacing Project 2 CGI
+#PutCGI:	bibleajax.cgi
+#	chmod 755 bibleajax.cgi
+#	cp bibleajax.cgi /var/www/html/class/csc3004/$(USER)/cgi-bin
+#	echo "Current contents of your cgi-bin directory: "
+#	ls -l /var/www/html/class/csc3004/$(USER)/cgi-bin/
 
-	echo "Current contents of your cgi-bin directory: "
-	ls -l /var/www/html/class/csc3004/$(USER)/cgi-bin/
-
-PutHTML:
-	cp bibleajax.html /var/www/html/class/csc3004/$(USER)
-
-	echo "Current contents of your HTML directory: "
-	ls -l /var/www/html/class/csc3004/$(USER)
+#PutHTML:
+#	cp bibleajax.html /var/www/html/class/csc3004/$(USER)
+#	echo "Current contents of your HTML directory: "
+#	ls -l /var/www/html/class/csc3004/$(USER)
 
 clean:
-	rm *.o core bibleajax.cgi
+	rm -f *.o testreader bibleajax.cgi
