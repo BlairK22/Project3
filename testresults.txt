@@ -1,4 +1,4 @@
-=== Test 1: Genesis 1:1 ===
+Test 1: Genesis 1:1 
 Command: ./testreader 1 1 1
 Bible reference index built:
   Number of references in index: 31102
@@ -12,7 +12,7 @@ Verification - byte offsets for known references:
 
 Genesis 1:1 In the beginning God created the heavens and the earth.
 
-=== Test 2: John 3:16 ===
+Test 2: John 3:16 
 Command: ./testreader 43 3 16
 Bible reference index built:
   Number of references in index: 31102
@@ -26,7 +26,7 @@ Verification - byte offsets for known references:
 
 John 3:16 For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.
 
-=== Test 3: Revelation 5:12 ===
+Test 3: Revelation 5:12 
 Command: ./testreader 66 5 12
 Bible reference index built:
   Number of references in index: 31102
@@ -40,7 +40,7 @@ Verification - byte offsets for known references:
 
 Revelation 5:12 saying with a loud voice, "Worthy is the Lamb who has been killed to receive the power, wealth, wisdom, strength, honor, glory, and blessing!"
 
-=== Test 4: Genesis 2:2-4 (3 verses) ===
+Test 4: Genesis 2:2-4 (3 verses) 
 Command: ./testreader 1 2 2 3
 Bible reference index built:
   Number of references in index: 31102
@@ -56,7 +56,7 @@ Genesis 2:2 On the seventh day God finished his work which he had made; and he r
 Genesis 2:3 God blessed the seventh day, and made it holy, because he rested in it from all his work which he had created and made.
 Genesis 2:4 This is the history of the generations of the heavens and of the earth when they were created, in the day that Yahweh God made the earth and the heavens.
 
-=== Test 5: Psalm 19:1-6 (6 verses) ===
+Test 5: Psalm 19:1-6 (6 verses) 
 Command: ./testreader 19 19 1 6
 Bible reference index built:
   Number of references in index: 31102
@@ -75,7 +75,7 @@ Psalms 19:4 Their voice has gone out through all the earth, their words to the e
 Psalms 19:5 which is as a bridegroom coming out of his room, like a strong man rejoicing to run his course.
 Psalms 19:6 His going forth is from the end of the heavens, his circuit to its ends; There is nothing hidden from its heat.
 
-=== Test 6: Matthew 5:43-6:4 (10 verses) ===
+Test 6: Matthew 5:43-6:4 (10 verses) 
 Command: ./testreader 40 5 43 10
 Bible reference index built:
   Number of references in index: 31102
