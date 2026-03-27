@@ -95,71 +95,50 @@ int main() {
       if (bookNum < 1 || bookNum > 66) {
          cout << "<p><b>Error:</b> Invalid book number.</p>" << endl;
       } else {
-         // Create the FIFO pipe objects (suppress stdout messages)
+         // Build request: "book:chapter:verse:numVerses"
+         stringstream ss;
+         ss << bookNum << ":" << chapterNum << ":" << verseNum << ":" << numVerses;
+         string request = ss.str();
+         log("Sending request: " + request);
+
+         // Create pipe objects and suppress cout from Fifo constructor
          streambuf* origBuf = cout.rdbuf();
          cout.rdbuf(NULL);
          Fifo recfifo(receive_pipe);
          Fifo sendfifo(send_pipe);
          cout.rdbuf(origBuf);
 
-         // Send each verse request to the server one at a time
-         // Start with the requested reference
-         int curBook = bookNum;
-         int curChap = chapterNum;
-         int curVerse = verseNum;
+         // Send request to server
+         sendfifo.openwrite();
+         sendfifo.send(request);
+
+         // Read replies from server
+         recfifo.openread();
+         log("Waiting for reply...");
 
          int currentChapter = -1;
-         int currentBook = -1;
+         string results = "";
+         while (results != "$end") {
+            results = recfifo.recv();
+            log("Received: " + results);
 
-         for (int i = 0; i < numVerses; i++) {
-            // Build the request string: "book:chapter:verse"
-            stringstream ss;
-            ss << curBook << ":" << curChap << ":" << curVerse;
-            string request = ss.str();
-
-            log("Sending request: " + request);
-
-            // Send request to server
-            sendfifo.openwrite();
-            sendfifo.send(request);
-
-            // Read reply from server
-            recfifo.openread();
-            string reply = "";
-            string results = "";
-            while (results != "$end") {
-               results = recfifo.recv();
-               log("Received: " + results);
-               if (results != "$end") {
-                  reply = results;
-               }
-            }
-            recfifo.fifoclose();
-            sendfifo.fifoclose();
-
-            // Parse the reply: "status:BookName C:V verse_text"
-            if (reply.length() > 0) {
-               // Get the status code (first character before the colon)
-               string::size_type colonPos = reply.find(':');
+            if (results != "$end") {
+               // Parse reply: "status:BookName C:V verse_text"
+               string::size_type colonPos = results.find(':');
                if (colonPos != string::npos) {
-                  int status = atoi(reply.substr(0, colonPos).c_str());
+                  int status = atoi(results.substr(0, colonPos).c_str());
 
                   if (status == 0) {
-                     // SUCCESS - parse and display the verse
-                     string verseData = reply.substr(colonPos + 1);
+                     // SUCCESS - parse the verse data
+                     string verseData = results.substr(colonPos + 1);
 
-                     // Parse book name, chapter:verse, and text from verseData
-                     // Format: "BookName C:V text"
-                     // Find the chapter:verse pattern to split
-                     string::size_type spacePos = 0;
+                     // Find chapter:verse pattern
                      string::size_type cvPos = verseData.find(':');
                      if (cvPos != string::npos) {
-                        // Find the space before the chapter number
-                        spacePos = verseData.rfind(' ', cvPos);
-                        string bkName = verseData.substr(0, spacePos);
-                        string rest = verseData.substr(spacePos + 1);
+                        string::size_type spaceBeforeChap = verseData.rfind(' ', cvPos);
+                        string bkName = verseData.substr(0, spaceBeforeChap);
+                        string rest = verseData.substr(spaceBeforeChap + 1);
 
-                        // Parse chapter and verse from rest
                         string::size_type colonPos2 = rest.find(':');
                         int rChap = atoi(rest.substr(0, colonPos2).c_str());
                         string afterColon = rest.substr(colonPos2 + 1);
@@ -167,37 +146,27 @@ int main() {
                         int rVerse = atoi(afterColon.substr(0, spacePos2).c_str());
                         string text = afterColon.substr(spacePos2 + 1);
 
-                        int rBook = curBook;
-
-                        // Stop if we moved to a new book
-                        if (i > 0 && rBook != currentBook) {
-                           break;
-                        }
-
                         // Print chapter heading if chapter changed
                         if (rChap != currentChapter) {
                            currentChapter = rChap;
-                           currentBook = rBook;
                            cout << "<b>" << bkName << " " << rChap << "</b><br>" << endl;
                         }
 
                         // Display verse number and text
                         cout << rVerse << " " << text << "<br>" << endl;
-
-                        // For next iteration, we need the next verse reference
-                        // Increment verse for next request
-                        curVerse = rVerse + 1;
-                        curChap = rChap;
                      }
                   } else {
                      // Error from server
-                     string errorMsg = reply.substr(colonPos + 1);
+                     string errorMsg = results.substr(colonPos + 1);
                      cout << "<p><b>Error:</b> " << errorMsg << "</p>" << endl;
-                     break;
                   }
                }
             }
          }
+
+         recfifo.fifoclose();
+         sendfifo.fifoclose();
+         log("Pipes closed.");
       }
    } else if (chapter == cgi.getElements().end()) {
       cout << "<p>Please enter a chapter number.</p>" << endl;
