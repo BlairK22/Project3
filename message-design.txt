@@ -1,24 +1,53 @@
+
 Project 3 Part 2 - Pipe Message Design
+
 Blair Karamaga
+
 CSC-3004
 
 Request Pipe Format (Client -> Server):
-----------------------------------------
-Format: "book:chapter:verse"
-Example: "43:3:16"
 
-The request is a string containing three integers separated by colons,
-representing the book number, chapter number, and verse number.
-This matches the format used by the Ref parse constructor.
+
+
+Format: "book:chapter:verse:numVerses"
+
+Example: "43:3:16:1" for John 3:16, single verse
+
+Example: "40:5:43:10" for Matthew 5:43, 10 verses
+
+The request is a string of integers separated by colons:
+
+- book: book number (1-66)
+
+- chapter: chapter number
+
+- verse: starting verse number
+
+- numVerses: how many consecutive verses to retrieve
 
 Reply Pipe Format (Server -> Client):
---------------------------------------
-Format: "status:verse_text"
+
+
+
+Format: "status:BookName C:V verse_text"
+
 Example: "0:John 3:16 For God so loved the world..."
 
-The first character is the status code (0=SUCCESS, 1=NO_BOOK,
-2=NO_CHAPTER, 3=NO_VERSE, 4=OTHER), followed by a colon,
-followed by the verse text (if successful) or an error message.
+The status code values are:
 
-The reply is terminated by a "$end" message to signal the client
-that the server has finished sending data for this request.
+- 0 = SUCCESS
+
+- 1 = NO_BOOK
+
+- 2 = NO_CHAPTER
+
+- 3 = NO_VERSE
+
+For multi-verse requests, the server sends one reply message
+
+per verse. Each reply contains the status and full verse data.
+
+The response is terminated by a "$end" message to signal
+
+the client that the server has finished sending.
+
